@@ -1,23 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import Navbar from './components/Navbar';
+import CourseForm from './components/CourseForm';
+import CourseList from './components/CourseList';
+import CourseInstanceForm from './components/CourseInstanceForm';
+import React, { useState } from 'react';
+import axios from 'axios';
+
 
 function App() {
+  const [courses, setCourses] = useState([]);
+  // const [instances, setInstances] = useState([]);
+
+  const fetchCourses = async () => {
+    try {
+      const response = await axios.get('/api/courses');
+      setCourses(response.data);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
+  };
+
+  // const fetchInstances = async () => {
+  //   try {
+  //     const response = await axios.get('/api/instances');
+  //     setInstances(response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching instances:', error);
+  //   }
+  // };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container mx-auto">
+      <Navbar />
+      <CourseForm />
+      <CourseInstanceForm />
+      <CourseList courses={courses} fetchCourses={fetchCourses} />
     </div>
   );
 }
