@@ -1,40 +1,47 @@
-import './App.css';
-import Navbar from './components/Navbar';
+// src/App.js
+import React, { useState, useEffect } from 'react';
+import { fetchCourses, fetchCourseInstances } from './services/api';
 import CourseForm from './components/CourseForm';
 import CourseList from './components/CourseList';
 import CourseInstanceForm from './components/CourseInstanceForm';
-import React, { useState } from 'react';
-import axios from 'axios';
-
+import CourseInstanceList from './components/CourseInstanceList';
+import './App.css';
 
 function App() {
   const [courses, setCourses] = useState([]);
-  // const [instances, setInstances] = useState([]);
+  const [instances, setInstances] = useState([]);
 
-  const fetchCourses = async () => {
-    try {
-      const response = await axios.get('/api/courses');
-      setCourses(response.data);
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-    }
+  useEffect(() => {
+    const loadCourses = async () => {
+      const fetchedCourses = await fetchCourses();
+      setCourses(fetchedCourses);
+    };
+    loadCourses();
+  }, []);
+
+  const addCourse = (course) => {
+    setCourses([...courses, course]);
   };
 
-  // const fetchInstances = async () => {
-  //   try {
-  //     const response = await axios.get('/api/instances');
-  //     setInstances(response.data);
-  //   } catch (error) {
-  //     console.error('Error fetching instances:', error);
-  //   }
-  // };
+  const deleteCourse = (id) => {
+    setCourses(courses.filter((course) => course.id !== id));
+  };
+
+  const addInstance = (instance) => {
+    setInstances([...instances, instance]);
+  };
+
+  const deleteInstance = (id) => {
+    setInstances(instances.filter((instance) => instance.id !== id));
+  };
 
   return (
-    <div className="container mx-auto">
-      <Navbar />
-      <CourseForm />
-      <CourseInstanceForm />
-      <CourseList courses={courses} fetchCourses={fetchCourses} />
+    <div className="App">
+      <h1 className="text-3xl font-bold mb-4">Course Management</h1>
+      <CourseForm onAddCourse={addCourse} />
+      <CourseList courses={courses} onDeleteCourse={deleteCourse} />
+      <CourseInstanceForm onAddInstance={addInstance} />
+      <CourseInstanceList instances={instances} onDeleteInstance={deleteInstance} />
     </div>
   );
 }

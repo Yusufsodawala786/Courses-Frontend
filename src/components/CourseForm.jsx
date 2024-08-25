@@ -1,32 +1,47 @@
+// src/components/CourseForm.js
 import React, { useState } from 'react';
-import axios from 'axios';
+import { createCourse } from '../services/api';
 
-const CourseForm = () => {
+const CourseForm = ({ onAddCourse }) => {
   const [title, setTitle] = useState('');
-  const [code, setCode] = useState('');
+  const [courseCode, setCourseCode] = useState('');
   const [description, setDescription] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newCourse = { title, code, description };
-    await axios.post('/api/courses', newCourse);
+    const newCourse = await createCourse({ title, courseCode, description });
+    onAddCourse(newCourse);
+    setTitle('');
+    setCourseCode('');
+    setDescription('');
   };
 
   return (
-    <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Course Title</label>
-        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" value={title} onChange={(e) => setTitle(e.target.value)} />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Course Code</label>
-        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" value={code} onChange={(e) => setCode(e.target.value)} />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Course Description</label>
-        <textarea className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
-      </div>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Course</button>
+    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow-md">
+      <h3 className="text-lg font-semibold mb-2">Add Course</h3>
+      <input
+        className="border p-2 w-full mb-2"
+        type="text"
+        placeholder="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <input
+        className="border p-2 w-full mb-2"
+        type="text"
+        placeholder="Course Code"
+        value={courseCode}
+        onChange={(e) => setCourseCode(e.target.value)}
+      />
+      <textarea
+        className="border p-2 w-full mb-2"
+        placeholder="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+        Add Course
+      </button>
     </form>
   );
 };
